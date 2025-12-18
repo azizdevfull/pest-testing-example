@@ -42,3 +42,14 @@ test('registration fails if email already exists', function () {
     $response->assertStatus(422);
     $response->assertJsonValidationErrors('email');
 });
+
+test('user can login successfully', function () {
+    User::factory()->create(['email' => 'john@example.com', 'password' => bcrypt('password')]);
+    $response = $this->postJson('/api/login', [
+        'email' => 'john@example.com',
+        'password' => 'password',
+    ]);
+
+    $response->assertSuccessful();
+    $this->assertAuthenticated();
+});
